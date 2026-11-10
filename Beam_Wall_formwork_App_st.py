@@ -405,6 +405,16 @@ if st.button("🚀 執行全獨立三軌鋼木複合檢核並生成送審報告"
         # 渲染網頁結果
         st.success("✅ 結構強度檢核計算完成！")
         
+        # 【智慧優化】本機備份防護：檢查 D 槽目錄是否存在，存在才執行實體備份存檔
+        target_dir = r"D:\PythonTraining\Beam and Wall _Formwork_app\CMD Beam and Wall_Formwork_App"
+        is_local_env = False
+        if os.path.exists(target_dir):
+            try:
+                df_wall.to_excel(os.path.join(target_dir, "牆模板檢核摘要.xlsx"), index=False)
+                is_local_env = True
+            except Exception:
+                pass
+        
         # 1. 牆模板結果
         st.subheader("📋 三、牆模板系統深度分層檢核結果")
         st.dataframe(df_wall.style.format({
@@ -473,6 +483,12 @@ if st.button("🚀 執行全獨立三軌鋼木複合檢核並生成送審報告"
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 width="stretch"
             )
+
+        # 提示本機存盤狀態
+        if is_local_env:
+            st.success(f"💾 本機備份成功！計算書與數據已同步儲存至：{target_dir}")
+        else:
+            st.info("🌐 雲端執行模式：請使用上方按鈕進行計算書下載。")
 
     except Exception as e:
         st.error(f"❌ 發生錯誤，請確認輸入欄位格式是否正確。錯誤訊息: {str(e)}")    
